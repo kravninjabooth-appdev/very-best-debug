@@ -1,8 +1,8 @@
 class VenuesController < ApplicationController
 
   def index
-    matching_venues = venue.all
-    venues = matching_venues.order(:created_at)
+    matching_venues = Venue.all
+    @venues = matching_venues.order(:created_at)
 
     render({ :template => "venue_templates/venue_list.html.erb" })
   end
@@ -10,32 +10,32 @@ class VenuesController < ApplicationController
   def show
     venue_id = params.fetch("venue_id")
     matching_venues = Venue.where({ :id => venue_id })
-    @the_venue = matching_venues.first
+    @venue = matching_venues.first
 
     render({ :template => "venue_templates/details.html.erb" })
   end
 
   def create
     @venue = Venue.new
-    venue.address = params.fetch("query_address")
-    venue.name = params.fetch("name")
-    venue.neighborhood = params.fetch("neighborhood")
-    venue.save
+    @venue.address = params.fetch("query_address")
+    @venue.name = params.fetch("query_name")
+    @venue.neighborhood = params.fetch("query_neighborhood")
+    @venue.save
 
-    redirect_to("/venues/#{venue.name}")
+    redirect_to("/venues/#{@venue.id}")
   end
   
   def update
-    the_id = params.fetch("venue_id")
+    venue_id = params.fetch("the_id")
     #Parameters: {"query_address"=>"Suite 993 9368 Cassin Village, New Pearlyhaven, ID 66162", "query_name"=>"Belly Pizza", "query_neighborhood"=>"Royal Oaks Sq", "the_id"=>"24"}
 
-    @venue = Venue.where({ :id => the_id })
-    venue.address = params.fetch("query_address")
-    venue.name = params.fetch("query_name")
-    venue.neighborhood = params.fetch("query_neighborhood")
-    venue.save
+    @venue = Venue.where({ :id => venue_id }).at(0)
+    @venue.address = params.fetch("query_address")
+    @venue.name = params.fetch("query_name")
+    @venue.neighborhood = params.fetch("query_neighborhood")
+    @venue.save
     
-    redirect_to("/venues/#{venue.id}")
+    redirect_to("/venues/#{@venue.id}")
   end
 
   def destroy
